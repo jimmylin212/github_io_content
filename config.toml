@@ -1,6 +1,6 @@
 # Site settings
 baseurl = "https://jimmylin212.github.io"
-languageCode = "en-us"
+languageCode = "zh-TW"
 title = "Jimmy Lin"
 theme = "cactus"
 # Enter your tracking code to enable Google Analytics
@@ -11,7 +11,7 @@ disqusShortname = ""
 [params]
 	name = "Jimmy Lin"
 	description = "Things that I learned"
-	bio = "Blogger && Programmer"
+	bio = "Programmer - Diver - Blogger"
 	# Enter optionally your twitter account
 	twitter = ""
 	enableRSS = true
@@ -33,9 +33,9 @@ disqusShortname = ""
 	readMore = ""
 	copyright = ""
 	# Sharing options and author information in posts
-	aboutAuthor = "I'm an blogger."
-	tweet = ""
-	share = ""
+	aboutAuthor = "Programmer - Diver - Blogger"
+	# tweet = ""
+	# share = ""
 	# 404 page
 	title404 = ""
 	subtitle404 = ""
@@ -47,7 +47,7 @@ disqusShortname = ""
 
 # Add additional social link entries underneath
 [social]
-    twitter  = "https://www.twitter.com/"
     facebook = "https://www.facebook.com/jimmylin212"
-    github   = "https://www.github.com/jimmylin212"
-    # dribble  = "https://www.dribbble.com/"
+	linkedin = "https://www.linkedin.com/in/jimmylin212/"
+    githubalt = "https://www.github.com/jimmylin212"
+	stackoverflow = "https://stackoverflow.com/story/jimmylin212"
