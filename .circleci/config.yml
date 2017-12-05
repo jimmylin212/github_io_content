@@ -2,7 +2,7 @@ version: 2
 jobs:
   build:
     docker:
-      - image: felicianotech/docker-hugo:latest
+      - image: felicianotech/docker-hugo:0.30.2
     working_directory: ~/project
     steps:
       - checkout
@@ -11,12 +11,9 @@ jobs:
           command: HUGO_ENV=production hugo -v
       - run:
           name: "Test Website"
-          command: |
-            hugo
-            htmlproofer ~/project/public --allow-hash-href --check-html --empty-alt-ignore
+          command: htmlproofer ~/project/public --allow-hash-href --check-html --empty-alt-ignore
       - deploy:
           command: |
-            hugo
             cd ~/project/public
             git config --global user.email "jimmylin212@gmail.com"
             git config --global user.name "Jimmy Lin"
