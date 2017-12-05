@@ -3,18 +3,18 @@ jobs:
   build:
     docker:
       - image: felicianotech/docker-hugo:latest
-    working_directory: ~/
+    working_directory: ~/project
     steps:
       - checkout
       - run:
           name: "Run Hugo"
-          command: HUGO_ENV=production hugo -v -s ~/
+          command: HUGO_ENV=production hugo -v -s ~/project
       - run:
           name: "Test Website"
-          command: htmlproofer ~/public --allow-hash-href --check-html --empty-alt-ignore
+          command: htmlproofer ~/project/public --allow-hash-href --check-html --empty-alt-ignore
       - add_ssh_keys
       - deploy:
           command: |
-            cd ~/public
+            cd ~/project/public
             git add -A
             git push master origin
