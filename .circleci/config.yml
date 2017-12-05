@@ -16,5 +16,6 @@ jobs:
       - deploy:
           command: |
             cd ~/project/public
-            git add -A
-            git push master origin
+            git status
+            git add .
+            git push
