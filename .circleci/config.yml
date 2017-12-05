@@ -1,0 +1,20 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: felicianotech/docker-hugo:latest
+    working_directory: ~/github_io_content
+    steps:
+      - checkout
+      - run:
+          name: "Run Hugo"
+          command: HUGO_ENV=production hugo -v -s ~/github_io_content
+      - run:
+          name: "Test Website"
+          command: htmlproofer ~/github_io_content/public --allow-hash-href --check-html --empty-alt-ignore
+      - add_ssh_keys
+      - deploy:
+          command: |
+            cd ~/github_io_content/public
+            git add -A
+            git push master origin
