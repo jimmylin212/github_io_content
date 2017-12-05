@@ -11,9 +11,12 @@ jobs:
           command: HUGO_ENV=production hugo -v
       - run:
           name: "Test Website"
-          command: htmlproofer ~/project/public --allow-hash-href --check-html --empty-alt-ignore
+          command: |
+            hugo
+            htmlproofer ~/project/public --allow-hash-href --check-html --empty-alt-ignore
       - deploy:
           command: |
+            hugo
             cd ~/project/public
             git config --global user.email "jimmylin212@gmail.com"
             git config --global user.name "Jimmy Lin"
