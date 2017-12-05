@@ -8,14 +8,13 @@ jobs:
       - checkout
       - run:
           name: "Run Hugo"
-          command: HUGO_ENV=production hugo -v -s ~/project
+          command: HUGO_ENV=production hugo -v
       - run:
           name: "Test Website"
           command: htmlproofer ~/project/public --allow-hash-href --check-html --empty-alt-ignore
-      - add_ssh_keys
       - deploy:
           command: |
             cd ~/project/public
-            git status
-            git add .
+            git add -A
+            git commit -m "Deploy from CircleCI"
             git push
