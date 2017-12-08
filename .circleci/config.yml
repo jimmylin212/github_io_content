@@ -10,7 +10,7 @@ jobs:
           name: "Run Hugo"
           command: |
             git submodule sync && git submodule update --init
-            HUGO_ENV=production hugo -v -d ~/project/public
+            HUGO_ENV=production hugo -v
       - run:
           name: "Test Website"
           command: htmlproofer ~/project/public --allow-hash-href --check-html --empty-alt-ignore
