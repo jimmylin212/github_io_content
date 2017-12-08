@@ -5,7 +5,7 @@ title = "Jimmy Lin"
 theme = "cactus"
 googleAnalytics = "UA-2756751-14"
 disqusShortname = "jimmylin212-github-io"
-staticDir = ["static"]
+staticDir = "static"
 
 [params]
 	name = "Jimmy Lin"
