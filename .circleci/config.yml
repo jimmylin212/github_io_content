@@ -16,7 +16,7 @@ jobs:
             git submodule foreach --recursive git pull origin master
             HUGO_ENV=production hugo -v
       - persist_to_workspace:
-        root: public
+          root: public
 #      - run:
 #          name: "Test Website"
 #          command: htmlproofer ~/project/public --allow-hash-href --check-html --empty-alt-ignore --disable-external --checks-to-ignore "HtmlCheck"
