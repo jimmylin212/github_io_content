@@ -1,6 +1,6 @@
 ---
 title: "使用 CircleCI 部署 Hugo 靜態網站"
-date: 2017-12-08T16:00:48+08:00
+date: 2017-12-11T16:00:48+08:00
 draft: false
 ---
 
