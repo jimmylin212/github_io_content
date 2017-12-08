@@ -13,7 +13,7 @@ jobs:
             HUGO_ENV=production hugo -v
       - run:
           name: "Test Website"
-          command: htmlproofer ~/project/public --allow-hash-href --check-html --empty-alt-ignore
+          command: htmlproofer ~/project/public --allow-hash-href --check-html --empty-alt-ignore --disable-external --checks_to_ignore ["ID wrapper already defined"]
       - deploy:
           command: |
             cd ~/project/public
