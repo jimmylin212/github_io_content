@@ -19,6 +19,7 @@ jobs:
           fingerprints:
             - "44:4d:07:a8:35:1c:55:4a:d2:e9:ac:03:f0:33:87:52"
       - deploy:
+          tag: /newpost.*/
           name: "Deploy to github.io"       
           command: |
             cd ~/project/public
