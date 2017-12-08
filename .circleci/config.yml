@@ -18,7 +18,7 @@ jobs:
       - persist_to_workspace:
           root: public
           paths: 
-            - *
+            - .
 #      - run:
 #          name: "Test Website"
 #          command: htmlproofer ~/project/public --allow-hash-href --check-html --empty-alt-ignore --disable-external --checks-to-ignore "HtmlCheck"
