@@ -1,12 +1,11 @@
 # Site settings
 baseurl = "https://jimmylin212.github.io"
-languageCode = "zh-TW"
+languageCode = "zh"
 title = "Jimmy Lin"
 theme = "cactus"
-# Enter your tracking code to enable Google Analytics
-googleAnalytics = ""
-# Disable comments by leaving disqusShortname empty
-disqusShortname = ""
+googleAnalytics = "UA-2756751-14"
+disqusShortname = "jimmylin212-github-io"
+staticDir = ["static"]
 
 [params]
 	name = "Jimmy Lin"

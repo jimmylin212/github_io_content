@@ -8,7 +8,9 @@ jobs:
       - checkout
       - run:
           name: "Run Hugo"
-          command: HUGO_ENV=production hugo -v -d ~/project/public
+          command: |
+            git submodule sync && git submodule update --init
+            HUGO_ENV=production hugo -v -d ~/project/public
       - run:
           name: "Test Website"
           command: htmlproofer ~/project/public --allow-hash-href --check-html --empty-alt-ignore
