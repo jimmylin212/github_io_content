@@ -22,4 +22,4 @@ jobs:
             git config --global user.name "Jimmy Lin"
             git add -A
             git commit -m "Deploy from CircleCI"
-            git push
+            git push origin HEAD:master
