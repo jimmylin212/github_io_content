@@ -14,9 +14,9 @@ jobs:
 #      - run:
 #          name: "Test Website"
 #          command: htmlproofer ~/project/public --allow-hash-href --check-html --empty-alt-ignore --disable-external --checks-to-ignore "HtmlCheck"
-#      - add_ssh_keys:
-#          fingerprints:
-#            - "44:4d:07:a8:35:1c:55:4a:d2:e9:ac:03:f0:33:87:52"
+      - add_ssh_keys:
+          fingerprints:
+            - "44:4d:07:a8:35:1c:55:4a:d2:e9:ac:03:f0:33:87:52"
       - deploy:
           name: "Deploy to github.io"       
           command: |
