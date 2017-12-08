@@ -9,7 +9,8 @@ jobs:
       - run:
           name: "Run Hugo"
           command: |
-            git submodule sync && git submodule update --init
+            git submodule sync && git submodule update --init 
+            git submodule foreach --recursive git pull origin master
             HUGO_ENV=production hugo -v
 #      - run:
 #          name: "Test Website"
