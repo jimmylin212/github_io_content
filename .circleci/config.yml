@@ -1,9 +1,12 @@
 version: 2
+global: &global
+  working_directory: ~/project
+  docker:
+    - image: felicianotech/docker-hugo:0.30.2
+
 jobs:
   build:
-    docker:
-      - image: felicianotech/docker-hugo:0.30.2
-    working_directory: ~/project
+    <<: *global
     steps:
       - checkout
       - run:
@@ -12,22 +15,23 @@ jobs:
             git submodule sync && git submodule update --init 
             git submodule foreach --recursive git pull origin master
             HUGO_ENV=production hugo -v
+      - persist_to_workspace:
+        root: public
 #      - run:
 #          name: "Test Website"
 #          command: htmlproofer ~/project/public --allow-hash-href --check-html --empty-alt-ignore --disable-external --checks-to-ignore "HtmlCheck"
 
   deploy:
-    docker:
-      - image: felicianotech/docker-hugo:0.30.2
-    working_directory: ~/project
+    <<: *global
     steps:
+      - attach_workspace:
+        at: ~/project/public
       - add_ssh_keys:
           fingerprints:
             - "44:4d:07:a8:35:1c:55:4a:d2:e9:ac:03:f0:33:87:52"
-      - deploy:
+      - run:
           name: "Deploy to github.io"       
           command: |
-            HUGO_ENV=production hugo -v
             cd ~/project/public
             git config --global user.email "jimmylin212@gmail.com"
             git config --global user.name "Jimmy Lin"
