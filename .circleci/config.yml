@@ -17,6 +17,8 @@ jobs:
 #          command: htmlproofer ~/project/public --allow-hash-href --check-html --empty-alt-ignore --disable-external --checks-to-ignore "HtmlCheck"
 
   deploy:
+    docker:
+      - image: felicianotech/docker-hugo:0.30.2
     working_directory: ~/project
     steps:
       - add_ssh_keys:
@@ -25,15 +27,13 @@ jobs:
       - deploy:
           name: "Deploy to github.io"       
           command: |
-            if [ ${CIRCLE_TAG} == "deploy" ]; then
-              cd ~/project/public
-              git config --global user.email "jimmylin212@gmail.com"
-              git config --global user.name "Jimmy Lin"
-              git add -A
-              git commit -m "Deploy from CircleCI"
-              git push origin HEAD:master
-            fi
-            
+            cd ~/project/public
+            git config --global user.email "jimmylin212@gmail.com"
+            git config --global user.name "Jimmy Lin"
+            git add -A
+            git commit -m "Deploy from CircleCI"
+            git push origin HEAD:master
+
 workflows:
   version: 2
   build-deploy:
@@ -43,5 +43,7 @@ workflows:
           requires:
             - build
           filters:
+            branches:
+              ignore: /.*/
             tags:
-              only: deploy
+              only: /deploy/
