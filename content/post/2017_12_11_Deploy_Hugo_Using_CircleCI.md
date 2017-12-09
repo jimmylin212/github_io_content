@@ -10,7 +10,9 @@ draft: true
 - 在 CircleCI 上面沒辦法正常產生靜態網站，錯誤訊息: `nothing to commit, working directory clean` 
 - 同樣的 commit，但是卻出現重複的 build，一個成功，一個失敗
 - 嘗試採用 CircleCI 2.0 的 workflow，不過無法成功部署
+- 嘗試用 CircleCI 2.0 workflow 中的 filter，屢次失敗 
 - Github 認證沒有過，無法 push 到 submodule 當中
+- 因為版本不對沒有辦法 push 到 submodule
 - ...
 
 
