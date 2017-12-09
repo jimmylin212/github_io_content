@@ -5,7 +5,7 @@ global: &global
     - image: felicianotech/docker-hugo:0.30.2
 
 jobs:
-  build:
+  build_n_deploy:
     <<: *global
     steps:
       - checkout
@@ -15,19 +15,11 @@ jobs:
             git submodule sync && git submodule update --init 
             git submodule foreach --recursive git pull origin master
             HUGO_ENV=production hugo -v
-      - persist_to_workspace:
-          root: public
-          paths: 
-            - .
+      
 #      - run:
 #          name: "Test Website"
 #          command: htmlproofer ~/project/public --allow-hash-href --check-html --empty-alt-ignore --disable-external --checks-to-ignore "HtmlCheck"
 
-  deploy:
-    <<: *global
-    steps:
-      - attach_workspace:
-          at: ~/project/public
       - add_ssh_keys:
           fingerprints:
             - "44:4d:07:a8:35:1c:55:4a:d2:e9:ac:03:f0:33:87:52"
@@ -43,12 +35,9 @@ jobs:
 
 workflows:
   version: 2
-  build-deploy:
+  build_n_deploy:
     jobs:
-      - build
-      - deploy:
-          requires:
-            - build
+      - build_n_deploy
           filters:
             tags:
               only: /^newpost-.*/
