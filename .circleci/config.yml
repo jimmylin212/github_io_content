@@ -37,7 +37,7 @@ workflows:
   version: 2
   build_n_deploy:
     jobs:
-      - build_n_deploy
+      - build_n_deploy:
           filters:
             tags:
               only: /^newpost-.*/
