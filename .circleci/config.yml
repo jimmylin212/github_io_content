@@ -39,7 +39,5 @@ workflows:
     jobs:
       - build_n_deploy:
           filters:
-            tags:
-              only: /^newpost-.*/
             branches:
-              ignore: /.*/
+              only: master
