@@ -76,7 +76,7 @@ jobs:
 
 workflows:
   version: 2
-  build_n_deploy:
+  build-deploy:
     jobs:
       - build_n_deploy:
           filters:
@@ -86,8 +86,72 @@ workflows:
 ```
 
 ### 設定檔解釋
+設定檔是參考 [這個連結][deploy_guide_circleCI_post] 所完成的，另外有根據自己的經驗在 deploy 那邊做了些調整，那倒底改了什麼呢？新版的 CircleCI 裡面，使用了 Workflow 的概念，讓整個流程更加清楚。那就來一段一段解釋吧！
 
-參考資料:
+第一段
+```
+version: 2
+global: &global
+  working_directory: ~/project
+  docker:
+    - image: felicianotech/docker-hugo:0.30.2
+```
+這一區可以想像成定義全域的參數，這邊訂了兩個全域的變數 `working_directory` 以及 `docker`。`working_directory` 是定義要在哪一個資料夾執行下面的指令，`project` 並不是一個叫做 `project` 的資料夾，CircleCI 把專案的 root 資料夾視為 project。另外這邊我們使用一個第三方的 Docker，利用這個 Docker 可以成功地把 Hugo 在 CircleCI 的環境下跑起來。
+
+再來我們先看一下最後一段 `workflows`
+```
+workflows:
+  version: 2
+  build-deploy:
+    jobs:
+      - build_n_deploy:
+          filters:
+            branches:
+              only: master
+```
+這段我們定義 workflow 要怎麼執行，要執行那些 jobs，有沒有一些 filter 的條件或是有沒有其他 dependent 的 job。在這邊，定義了一個 workflow，叫做 `build-deploy`，這個 workflow 只有一個 job 要跑，job 名稱叫做 `build_n_deploy`。另外在這個 job 上加上了執行條件，條件用 `filters` 來設定，可以使用的變數有 `branches` 以及 `tags`，看是要在特定的 branch/tag 才執行或不執行 job。這邊寫的是，只有 branch master 才行執行這個 job，其他的 branch 都不會執行。還記得前面流程的部分嗎？我們把一般的編輯或是草稿都只丟到 branch develop 裡面，只有真的要 release 的時候，才推送到 master 上。所以根據這段設定，也只有推送到 master
+才會部屬到 `<your-account.github.io>` 中。
+
+最後我們來看中間的 `jobs` 這段，這段可以分成三小段:
+1. Build 以及執行 Hugo 指令
+2. Testing Hugo 生成的網頁
+3. 部署到 `<your-account>.github.io`
+
+```
+jobs:
+  build_n_deploy:
+    <<: *global
+    steps:
+      - checkout
+      - run:
+          name: "Run Hugo"
+          command: |
+            git submodule sync && git submodule update --init 
+            git submodule foreach --recursive git pull origin master
+            HUGO_ENV=production hugo -v
+```
+
+```
+#      - run:
+#          name: "Test Website"
+#          command: htmlproofer ~/project/public --allow-hash-href --check-html --empty-alt-ignore --disable-external --checks-to-ignore "HtmlCheck"
+```
+
+```
+      - add_ssh_keys:
+          fingerprints:
+            - "44:4d:07:a8:35:...fingerprint_of_key"
+      - run:
+          name: "Deploy to github.io"       
+          command: |
+            cd ~/project/public
+            git config --global user.email "you@email.com"
+            git config --global user.name "First Last"
+            git add -A
+            git commit -m "Deploy from CircleCI"
+            git push origin HEAD:master
+```
+
 
 [github_key_generation]: https://help.github.com/articles/connecting-to-github-with-ssh/
 [circleci_readwrite_key]: https://circleci.com/docs/1.0/adding-read-write-deployment-key/
