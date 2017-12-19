@@ -1,7 +1,7 @@
 ---
 title: "使用 CircleCI 部署 Hugo 靜態網站"
 date: 2017-12-09T09:51:03+08:00
-draft: true
+draft: falise
 ---
 搞了半天，終於可以利用 CircleCI 來部署 Hugo 靜態網站到 Github Page，這當中出現出現非常多的錯誤，累積失敗的 Build 高達七十個，把這些錯誤的例子都寫寫，以後如果有人看到或是自己想要重新 Reference 都比較方便。
 
@@ -127,7 +127,8 @@ jobs:
             git submodule foreach --recursive git pull origin master
             HUGO_ENV=production hugo -v
 ```
-這段我們先定義了一個名子叫做 "build_n_deploy" 的 job，然後藉由 `<<: *global` 把前面第一所定義的內容抓回來。之後執行 `checkout` 會幫忙檢查一些有的沒的，再來就是 Hugo 相關的主要指令了。首先 `git submodule sync && git submodule update --init` 初始化 git submodule，這邊應該可以看到兩個 submodule，一個是資料夾 public，就是你部署的網站 `<your-account>.github.io`；另外一個是我們所使用的 theme。再來執行 `git submodule foreach --recursive git pull origin master`，把 submodule 都更新到最新的版本，以免之後 push 發生版本不相符的問題。最後執行 `HUGO_ENV=production hugo -v`，在 CircleCI 的環境底下把網站跑起來，點進去看 CircleCI 的網頁，應該可以看到如下圖的訊息，跟妳自己在本機端跑起來應該要是一模一樣的。
+這段我們先定義了一個名子叫做 "build_n_deploy" 的 job，然後藉由 `<<: *global` 把前面第一所定義的內容抓回來。之後執行 `checkout` 會幫忙檢查一些有的沒的，再來就是 Hugo 相關的主要指令了。首先 `git submodule sync && git submodule update --init` 初始化 git submodule，這邊應該可以看到兩個 submodule，一個是資料夾 public，就是你部署的網站 `<your-account>.github.io`；另外一個是我們所使用的 theme。再來執行 `git submodule foreach --recursive git pull origin master`，把 submodule 都更新到最新的版本，以免之後 push 發生版本不相符的問題。最後執行 `HUGO_ENV=production hugo -v`，在 CircleCI 的環境底下把網站跑起來，點進去看 CircleCI 的網頁，應該可以看到如下圖的訊息，跟你自己在本機端跑起來應該要是一模一樣的。
+
 ![](/images/0003/hugo_server.JPG)
 
 **部署到 `<your-account>.github.io`**
