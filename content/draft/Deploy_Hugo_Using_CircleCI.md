@@ -56,10 +56,6 @@ jobs:
             git submodule sync && git submodule update --init 
             git submodule foreach --recursive git pull origin master
             HUGO_ENV=production hugo -v
-      
-#      - run:
-#          name: "Test Website"
-#          command: htmlproofer ~/project/public --allow-hash-href --check-html --empty-alt-ignore --disable-external --checks-to-ignore "HtmlCheck"
 
       - add_ssh_keys:
           fingerprints:
@@ -88,7 +84,7 @@ workflows:
 ### 設定檔解釋
 設定檔是參考 [這個連結][deploy_guide_circleCI_post] 所完成的，另外有根據自己的經驗在 deploy 那邊做了些調整，那倒底改了什麼呢？新版的 CircleCI 裡面，使用了 Workflow 的概念，讓整個流程更加清楚。那就來一段一段解釋吧！
 
-第一段
+##### 第一段 (全域變數設定)
 ```
 version: 2
 global: &global
@@ -98,7 +94,7 @@ global: &global
 ```
 這一區可以想像成定義全域的參數，這邊訂了兩個全域的變數 `working_directory` 以及 `docker`。`working_directory` 是定義要在哪一個資料夾執行下面的指令，`project` 並不是一個叫做 `project` 的資料夾，CircleCI 把專案的 root 資料夾視為 project。另外這邊我們使用一個第三方的 Docker，利用這個 Docker 可以成功地把 Hugo 在 CircleCI 的環境下跑起來。
 
-再來我們先看一下最後一段 `workflows`
+##### 第三段 (Workflow 設定)
 ```
 workflows:
   version: 2
@@ -112,11 +108,12 @@ workflows:
 這段我們定義 workflow 要怎麼執行，要執行那些 jobs，有沒有一些 filter 的條件或是有沒有其他 dependent 的 job。在這邊，定義了一個 workflow，叫做 `build-deploy`，這個 workflow 只有一個 job 要跑，job 名稱叫做 `build_n_deploy`。另外在這個 job 上加上了執行條件，條件用 `filters` 來設定，可以使用的變數有 `branches` 以及 `tags`，看是要在特定的 branch/tag 才執行或不執行 job。這邊寫的是，只有 branch master 才行執行這個 job，其他的 branch 都不會執行。還記得前面流程的部分嗎？我們把一般的編輯或是草稿都只丟到 branch develop 裡面，只有真的要 release 的時候，才推送到 master 上。所以根據這段設定，也只有推送到 master
 才會部屬到 `<your-account.github.io>` 中。
 
-最後我們來看中間的 `jobs` 這段，這段可以分成三小段:
+##### 第二段 (jobs 設定)
+最後我們來看中間的 `jobs` 這段，這段可以分成兩小段:
 1. Build 以及執行 Hugo 指令
-2. Testing Hugo 生成的網頁
-3. 部署到 `<your-account>.github.io`
+2. 部署到 `<your-account>.github.io`
 
+**Build 以及執行 Hugo 指令**
 ```
 jobs:
   build_n_deploy:
@@ -130,13 +127,10 @@ jobs:
             git submodule foreach --recursive git pull origin master
             HUGO_ENV=production hugo -v
 ```
+這段我們先定義了一個名子叫做 "build_n_deploy" 的 job，然後藉由 `<<: *global` 把前面第一所定義的內容抓回來。之後執行 `checkout` 會幫忙檢查一些有的沒的，再來就是 Hugo 相關的主要指令了。首先 `git submodule sync && git submodule update --init` 初始化 git submodule，這邊應該可以看到兩個 submodule，一個是資料夾 public，就是你部署的網站 `<your-account>.github.io`；另外一個是我們所使用的 theme。再來執行 `git submodule foreach --recursive git pull origin master`，把 submodule 都更新到最新的版本，以免之後 push 發生版本不相符的問題。最後執行 `HUGO_ENV=production hugo -v`，在 CircleCI 的環境底下把網站跑起來，點進去看 CircleCI 的網頁，應該可以看到如下圖的訊息，跟妳自己在本機端跑起來應該要是一模一樣的。
+![](/images/0003/hugo_server.JPG)
 
-```
-#      - run:
-#          name: "Test Website"
-#          command: htmlproofer ~/project/public --allow-hash-href --check-html --empty-alt-ignore --disable-external --checks-to-ignore "HtmlCheck"
-```
-
+**部署到 `<your-account>.github.io`**
 ```
       - add_ssh_keys:
           fingerprints:
@@ -151,7 +145,12 @@ jobs:
             git commit -m "Deploy from CircleCI"
             git push origin HEAD:master
 ```
+最一開始我們先把 sshkey 加進去，之後才有辦法部署成功。再來就是重頭戲了。首先我們先進去剛剛成功建立起來的網站的資料夾，`cd ~/project/public`，進入這個資料夾之後，也等於我們進入了 project `<your-account>.github.io` 的 git 環境了。再來利用 `git config` 做一些基本的設定。然後 `git add -A` 把所有改變都加入 commit。利用 `git commit -m ""` 寫一下 commit 的訊息。最後 push 到 branch master 的 HEAD 就大功告成了。如果大功告成應該會有下面截圖的訊息。
 
+![](/images/0003/git_deploy.JPG)
+
+
+如果有問題的話就在下面發問吧，有看到都會回。
 
 [github_key_generation]: https://help.github.com/articles/connecting-to-github-with-ssh/
 [circleci_readwrite_key]: https://circleci.com/docs/1.0/adding-read-write-deployment-key/
