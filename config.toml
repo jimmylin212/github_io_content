@@ -1,11 +1,18 @@
 # Site settings
 baseurl = "https://jimmylin212.github.io"
-languageCode = "zh"
+languageCode = "zh-tw"
 title = "Jimmy Lin"
 theme = "cactus"
 googleAnalytics = "UA-2756751-14"
 disqusShortname = "jimmylin212-github-io"
 staticDir = "static"
+hasCJKLanguage = true
+enableRobotsTXT = true
+rssLimit = 10
+
+[taxonomies]
+  category = "categories"
+  tag = "tags"
 
 [params]
 	name = "Jimmy Lin"
