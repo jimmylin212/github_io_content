@@ -2,8 +2,10 @@
 title: "使用 CircleCI 部署 Hugo 靜態網站"
 date: 2017-12-09T09:51:03+08:00
 draft: false
-tags: ["Hugo"]
-categories: ["網站開發"]
+tags: ["Hugo", "CircleCI"]
+categories: ["Web App Development"]
+author: "Jimmy Lin"
+isCJKLanguage: true
 ---
 
 搞了半天，終於可以利用 CircleCI 來部署 Hugo 靜態網站到 Github Page，這當中出現出現非常多的錯誤，累積失敗的 Build 高達七十個，把這些錯誤的例子都寫寫，以後如果有人看到或是自己想要重新 Reference 都比較方便。
