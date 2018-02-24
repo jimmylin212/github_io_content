@@ -3,7 +3,9 @@ title: "Hugo 的文件管理 - 資料夾結構"
 date: 2017-12-05T22:00:48+08:00
 draft: false
 tags: ["Hugo"]
-categories: ["網站開發"]
+categories: ["Web App Development"]
+author: "Jimmy Lin"
+isCJKLanguage: true
 ---
 
 建立完個人網站之後，最重要的就是開始寫文章，或是讓充實網頁的內容，像是加上個人介紹頁面，或是為自己的網站建立一些基本部落格應該要有的功能，像是標籤，這些功能其實 Hugo 都已經有提供了，不過到底要怎麼用呢？那就要仔細閱讀一下 [Hugo Content Management][Hugo Content Management]，這邊我就針對一些特定的功能紀錄一下，以後也方便參照。
