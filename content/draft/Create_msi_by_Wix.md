@@ -64,21 +64,20 @@ New-Guid.GUID.ToUpper()
 ## 把檔案放進去
 這邊就是這個工具的重點了，我們要把 source file 放進 xml，讓 Wix 看得懂。直接看整份的 xml，再一塊一塊看裡面的內容：
 
-```xml
-<?xml version='1.0' encoding='windows-1252'?>
-<Wix xmlns='http://schemas.microsoft.com/wix/2006/wi'>
-    <Product ...>
-        <Package ... />
-    </Product>
-</Wix>
-```
 ### Directory
 這個地方就是放要把 source file 安裝到電腦的哪邊，比如說安裝到 Program Files 還是安裝到 Program Files (x86)；如果想要新增一個捷徑在開始選單，那要安裝到哪邊；如果想要新增一個捷徑到桌面，那要安裝到那邊，全部都是在這一個 **Directory** 當中設定。上面的例子是安裝到 Program Files 以及新增一個捷徑到開始選單。
 
 ```xml
-<Directory Id='ProgramFilesFolder' Name='PFiles'>
-    <Directory Id='COMPANYNAME' Name='COMPANY_NAME'>
-        <Directory Id='INSTALLDIR' Name='PRODUCT_NAME'/>
+<Directory Id="TARGETDIR" Name="SourceDir">
+    <Directory Id="ProgramFiles64Folder" Name="PFiles">
+        <Directory Id="ProgramFilesFolderCompany" Name="COMPANY_NAME">
+            <Directory Id="INSTALLDIR" Name="PRODUCT_NAME" />
+        </Directory>
+    </Directory>
+    <Directory Id="ProgramMenuFolder">
+        <Directory Id="ProgramMenuDirCompany" Name="COMPANY_NAME">
+            <Directory Id="ProgramMenuDirProduct" Name="PRODUCT_NAME" />
+        </Directory>
     </Directory>
 </Directory>
 ```
@@ -93,10 +92,15 @@ New-Guid.GUID.ToUpper()
 ```xml
 <DirectoryRef Id="INSTALLDIR">
     <Component Id="myapplication.exe" Guid="PUT-GUID-HERE">
-        <File Id="myapplication.exe" Source="MySourceFiles\MyApplication.exe" KeyPath="yes" Checksum="yes"/>
+        <File Id="myapplication.exe" 
+              Source="MySourceFiles\MyApplication.exe" 
+              KeyPath="yes" 
+              Checksum="yes"/>
     </Component>
     <Component Id="documentation.html" Guid="PUT-GUID-HERE">
-        <File Id="documentation.html" Source="MySourceFiles\documentation.html" KeyPath="yes"/>
+        <File Id="documentation.html" 
+              Source="MySourceFiles\documentation.html" 
+              KeyPath="yes"/>
     </Component>
 </DirectoryRef>
 ```
@@ -117,7 +121,7 @@ heat dir SOURCE_FILE_DIRECTORY -t HeatTransform.xslt -cg HarvestedComponentId -o
 
 這邊需要把 SOURCE_FILE_DIRECTORY 改成你放那些 source file 的資料夾
 
-- -cg 的意思是要把 ComponentGroup 叫什麼名字 (在 example.wxs 中會用到)
+- -cg 的意思是要把 ComponentGroup 叫什麼名字 (在 example.wxs 中會用到)，這邊我們先命名為 **HarvestedComponentId**
 - -o 指定輸出檔案名稱，假設為 `heat_harvested_results.wxs`
 - 因為有可能檔案階層多層，heat 也會自動幫我們產生 DirectoryRef，-dr 可以指定資料夾結構從哪邊開始參照
 - -var 可以在之後 Build 的時候用較方便的方式把檔案的路徑都指定到正確的路徑
@@ -126,23 +130,105 @@ heat dir SOURCE_FILE_DIRECTORY -t HeatTransform.xslt -cg HarvestedComponentId -o
 使用了 heat 這個工具，可以讓 DirectoryRef 更加簡化，看一下我們的 DirectoryRef 吧
 
 ```xml
+<DirectoryRef Id="INSTALLDIR">
+    <Component Id="componentINSTALLDIR" Guid="SOME_GUID" Win64="yes">
+        <RemoveFolder Directory="INSTALLDIR" 
+                      Id="componentINSTALLDIR" 
+                      On="uninstall" />
+    </Component>
+</DirectoryRef>
+<DirectoryRef Id="ProgramMenuDirHpProduct">
+    <Component Id="componentProgramMenuDirHpProduct" 
+               Guid="SOME_GUID" 
+               Win64="yes">
+        <Shortcut Name="PRODUCT_NAME" 
+                  Id="PRODUCTSHORTCUT" 
+                  Target="[INSTALLDIR]PRODUCT_NAME.exe" 
+                  WorkingDirectory="INSTALLDIR" />
+        <RemoveFolder Directory="ProgramMenuDirCompany" 
+                      Id="removeProgramMenuDirCompany" 
+                      On="uninstall" />
+        <RemoveFolder Directory="ProgramMenuDirProduct" 
+                      Id="removeProgramMenuDirProduct" 
+                      On="uninstall" />
+        <RegistryValue Value="1" 
+                       Name="installed" 
+                       Root="HKCU" 
+                       KeyPath="yes" 
+                       Type="integer" 
+                       Key="Software\COMPANY_NAME\PRODUCT_NAME" />
+    </Component>
+</DirectoryRef>
 ```
 
 更詳細的內容可以參考：[DirectoryRef Element], [Component Element], [File Element], [Heat Tool]
 
 ### Feature
 
+```xml
+<Feature Id="FEATUREPRODUCTNAME" 
+         AllowAdvertise="no" 
+         Display="expand" 
+         Level="1" 
+         InstallDefault="local"
+         ConfigurableDirectory="INSTALLDIR">
+    <ComponentRef Id="componentINSTALLDIR" />
+    <ComponentRef Id="componentProgramMenuDirHpProduct" />
+    <ComponentGroupRef Id="HarvestedComponentId" />
+</Feature>
+```
+
 更詳細的內容可以參考：[Feature Element]
+
 ### UI
 
+```xml
+<Property Id="WIXUI_INSTALLDIR" Value="INSTALLDIR" />
+<UIRef Id="WixUI_InstallDir" />
+<UI>
+    <Publish Control="Next" 
+             Dialog="WelcomeDlg" 
+             Value="InstallDirDlg" 
+             Event="NewDialog">1</Publish>
+    <Publish Control="Back" 
+             Dialog="InstallDirDlg" 
+             Value="WelcomeDlg" 
+             Event="NewDialog" 
+             Order="2">2</Publish>
+</UI>
+```
+
 更詳細的內容可以參考：[UI Element]
+
+### Upgrade 
+
+```xml
+<Upgrade Id="YOUR_UPGRADE_GUID">
+    <UpgradeVersion Minimum="1.0.0" 
+                    Property="NEWERVERSIONDETECTED" 
+                    IncludeMinimum="no" 
+                    OnlyDetect="yes" />
+    <UpgradeVersion Property="OLDERVERSIONBEINGUPGRADED" 
+                    Maximum="1.0.0" 
+                    IncludeMaximum="no" 
+                    OnlyDetect="no" />
+    <UpgradeVersion IncludeMinimum="yes" 
+                    Maximum="1.0.0" 
+                    Minimum="1.0.0" 
+                    Property="ANOTHERBUILDINSTALLED" 
+                    IncludeMaximum="yes" 
+                    OnlyDetect="yes" />
+</Upgrade>
+<InstallExecuteSequence>
+    <RemoveExistingProducts After="InstallInitialize" />
+</InstallExecuteSequence>
+```
+
 ***
 ## 產生 msi
 ***
 ## 自動產生 wxs 的 script
-因為擔心以後還會用到，我自己做了一個 powershell script，用來產生最基本可用的 `.wxs`，包含上面說的功能。如果要使用的話，請自己修改每一個 Function 中定義的部分，就可以根據這個 script 產生對應的 `.wxs` 了，script 在[這邊](https://gist.github.com/jimmylin212/83c71fffd4820b69db0e3c3959ecd3ae) 或是直接看內容：
-
-{{< gist jimmylin212 83c71fffd4820b69db0e3c3959ecd3ae >}} 
+因為擔心以後還會用到，我自己做了一個 powershell script，用來產生最基本可用的 `.wxs`，包含上面說的功能。如果要使用的話，請自己修改每一個 Function 中定義的部分，就可以根據這個 script 產生對應的 `.wxs` 了，script 在[這邊](https://gist.github.com/jimmylin212/83c71fffd4820b69db0e3c3959ecd3ae)。
 
 
 [Wix 上的教學]: https://www.firegiant.com/wix/tutorial/
