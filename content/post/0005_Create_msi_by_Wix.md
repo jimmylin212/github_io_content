@@ -87,7 +87,7 @@ New-Guid.GUID.ToUpper()
 更詳細的內容可以參考：[Directory Element]
 
 ### DirectoryRef
-在官網的教學上，並沒有特別提到這一個 Element，但是我東查西查之後發現利用 DirectoryRef 把內容跟資料夾分開，比較清楚，也更有益於了解整個架構。先看例子：
+在官網的教學上，並沒有特別提到這一個 Element，但是我東查西查之後發現利用 DirectoryRef 把內容跟資料夾分開，比較清楚，也更有益於了解整個架構。先看簡單的例子：
 
 ```xml
 <DirectoryRef Id="INSTALLDIR">
@@ -123,11 +123,11 @@ heat dir SOURCE_FILE_DIRECTORY -t HeatTransform.xslt -cg HarvestedComponentId -o
 
 - -cg 的意思是要把 ComponentGroup 叫什麼名字 (在 example.wxs 中會用到)，這邊我們先命名為 **HarvestedComponentId**
 - -o 指定輸出檔案名稱，假設為 `heat_harvested_results.wxs`
-- 因為有可能檔案階層多層，heat 也會自動幫我們產生 DirectoryRef，-dr 可以指定資料夾結構從哪邊開始參照
+- -dr 可以指定資料夾結構從哪邊開始參照，因為有可能檔案階層多層，heat 也會自動幫我們產生 DirectoryRef
 - -var 可以在之後 Build 的時候用較方便的方式把檔案的路徑都指定到正確的路徑
 - -t 使用 template 來修改產生之後的 wxs。因為 heat 內建的設定有限，利用 template 更方便，比如說要為所有的檔案增加 `win64='yes'` 的 attribute。 
 
-使用了 heat 這個工具，可以讓 DirectoryRef 更加簡化，看一下我們的 DirectoryRef 吧
+使用了 heat 這個工具，可以讓 DirectoryRef 更加簡化，看一下我們的真實的 DirectoryRef 吧
 
 ```xml
 <DirectoryRef Id="INSTALLDIR">
@@ -160,10 +160,15 @@ heat dir SOURCE_FILE_DIRECTORY -t HeatTransform.xslt -cg HarvestedComponentId -o
     </Component>
 </DirectoryRef>
 ```
+這邊我們定義了兩個 DirectoryRef。第一個我們給了 `Id="INSTALLDIR"`，讓 Wix 知道這個 DirectoryRef 對應到 Directory 中 Id 為 `INSTALLDIR` 的那一個資料夾；在這個 DirectoryRef 中，只有一個 Component，代表我們要包含哪些東西，在這個 Component 中只有一個 RemoveFolder 的 Element，意思說如果今天要移除這個軟體，我們也要同時移除這個資料夾。再來看第二個比較複雜的 DirectoryRef，這個 DirectoryRef 指向 Id 為 `ProgramMenuDirHpProduct` 的資料夾，就是開始功能捷徑的資料夾，一樣是一個 Component，不一樣的是在這個 Component 下面有四個 Element，分別是 Shortcut、RemoveFolder 以及 RegistryValue。都蠻直覺的，Shortcut 代表這個捷徑的目標執行檔是哪一個，在哪一個資料夾中執行：第二個 Remove 之前說過了就不多作介紹，最後一個 RegistryValue，表示在安裝的同時要新增一筆資料到 Registry 中，這樣就完成了我們的 DirectoryRef 了。前面有提到 Component 的 Id 必須要是唯一的，在下面的 Feature 當中會使用到這些 Id。
+
+那我們的檔案呢？因為前面我們使用了 `heat` 來產生檔案相關的 wxs 了，在 DirectoryRef 裡面就不用重複寫上，只需要在下面的 Feature 加上即可。
+
 
 更詳細的內容可以參考：[DirectoryRef Element], [Component Element], [File Element], [Heat Tool]
 
 ### Feature
+再來介紹一下 Feature 這個 Element，我們前面定義了這麼多東西，倒底安裝的時候全部都要進去，還是我只要安裝某幾個 Component 就好了，這些設定都放在 Feature 裡面。所以看一下下面的 xml 也很直覺，只要簡單得把我們要安裝的 Component Id 寫下，並且放在 ComponentRef Element 中，在安裝的時候就會把這個 Component 一起安裝進去。這邊要特別注意就是 ComponentGroupRef Element，`Id="HarvestedComponentId"`，這邊的 Id 就是前面使用 `heat` 指令時 `-cg` 的 attribute，利用這個 Element，把 heat 產生落落長的檔案全部都包含進來，一來可以讓原本的 xml 乾淨，可讀性又高，二來方便管理，如果新增或刪除了某些檔案，不用一個一個編輯 xml，方便許多。
 
 ```xml
 <Feature Id="FEATUREPRODUCTNAME" 
@@ -178,9 +183,12 @@ heat dir SOURCE_FILE_DIRECTORY -t HeatTransform.xslt -cg HarvestedComponentId -o
 </Feature>
 ```
 
+到這邊其實就已經告一段落了，產生出來的 msi 已經可以成功安裝，可惜的沒有漂亮的介面，使用者的體驗不是很好。Wix 也提供了一些方法，可以讓我們方便又快速的新增安裝的介面，提升使用者體驗，繼續看下去吧。
+
 更詳細的內容可以參考：[Feature Element]
 
 ### UI
+我對 UI 比較沒有深入研究，在 Wix 的教學中看到，利用 Wix 可以製造出很漂亮的 UI，排版之類的也都可以很動態的設置，另外 Wix 還提供了[懶人介面設計](http://wixtoolset.org/documentation/manual/v3/wixui/wixui_dialog_library.html)，利用內建的幾個樣板，可以製造出看起來還不錯的介面，我用了 `WixUI_InstallDir` 的樣板，可以幫我打造出兩頁，一頁歡迎頁，一頁讓使用者可以選擇要安裝在哪個資料夾，如果想要看更詳細的介面設計，可以看[這邊](https://www.firegiant.com/wix/tutorial/user-interface-revisited/)
 
 ```xml
 <Property Id="WIXUI_INSTALLDIR" Value="INSTALLDIR" />
@@ -198,37 +206,29 @@ heat dir SOURCE_FILE_DIRECTORY -t HeatTransform.xslt -cg HarvestedComponentId -o
 </UI>
 ```
 
-更詳細的內容可以參考：[UI Element]
-
-### Upgrade 
-
-```xml
-<Upgrade Id="YOUR_UPGRADE_GUID">
-    <UpgradeVersion Minimum="1.0.0" 
-                    Property="NEWERVERSIONDETECTED" 
-                    IncludeMinimum="no" 
-                    OnlyDetect="yes" />
-    <UpgradeVersion Property="OLDERVERSIONBEINGUPGRADED" 
-                    Maximum="1.0.0" 
-                    IncludeMaximum="no" 
-                    OnlyDetect="no" />
-    <UpgradeVersion IncludeMinimum="yes" 
-                    Maximum="1.0.0" 
-                    Minimum="1.0.0" 
-                    Property="ANOTHERBUILDINSTALLED" 
-                    IncludeMaximum="yes" 
-                    OnlyDetect="yes" />
-</Upgrade>
-<InstallExecuteSequence>
-    <RemoveExistingProducts After="InstallInitialize" />
-</InstallExecuteSequence>
-```
+更詳細的內容可以參考：[UI Element], [Publish Element]
 
 ***
 ## 產生 msi
+好了，說了這麼多，也做了一堆事情，是應該把所有東西結合再一起產生 .msi 了。使用下面的指令就可以四行產生 msi
+
+```
+## Using heat to generate the harvested file from SOURCE_FILE_DIRECTORY
+heat dir SOURCE_FILE_DIRECTORY -t HeatTransform.xslt -cg HarvestedComponentId -out heat_harvested_results.wxs -dr INSTALLDIR -var var.Dist -scom -frag -srd -sreg -gg
+
+## Generate the wixobj file of heat result
+candle.exe heat_harvested_results.wxs -dDist="SOURCE_FILE_DIRECTORY"
+
+## Generate the wixjob file of the xml that you create, change the example.wxs to your file name
+candle.exe example.wxs
+
+## Generate the msi by the 2 wixobj file above
+light.exe heat_harvested_results.wixobj example.wixobj -o "MSI_OUTPUT_FILENAME" -ext WixUIExtension
+```
+
 ***
 ## 自動產生 wxs 的 script
-因為擔心以後還會用到，我自己做了一個 powershell script，用來產生最基本可用的 `.wxs`，包含上面說的功能。如果要使用的話，請自己修改每一個 Function 中定義的部分，就可以根據這個 script 產生對應的 `.wxs` 了，script 在[這邊](https://gist.github.com/jimmylin212/83c71fffd4820b69db0e3c3959ecd3ae)。
+因為擔心以後還會用到，我自己做了一個 powershell script，用來產生最基本可用的 `.wxs`，包含上面說的功能，另外也包含了 heat 要用到的 template。如果要使用的話，請自己修改每一個 Function 中定義的部分，就可以根據這個 script 產生對應的 `.wxs` 了，script 在[這邊](https://gist.github.com/jimmylin212/83c71fffd4820b69db0e3c3959ecd3ae)。
 
 
 [Wix 上的教學]: https://www.firegiant.com/wix/tutorial/
@@ -245,3 +245,4 @@ heat dir SOURCE_FILE_DIRECTORY -t HeatTransform.xslt -cg HarvestedComponentId -o
 [Feature Element]: http://wixtoolset.org/documentation/manual/v3/xsd/wix/feature.html
 [Heat Tool]: http://wixtoolset.org/documentation/manual/v3/overview/heat.html
 [UI Element]: http://wixtoolset.org/documentation/manual/v3/xsd/wix/ui.html
+[Publish Element]: http://wixtoolset.org/documentation/manual/v3/xsd/wix/publish.html
