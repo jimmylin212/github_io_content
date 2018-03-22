@@ -1,7 +1,7 @@
 ---
 title: "利用 Wix 建立 Windows .msi 安裝檔"
 date: 2018-03-14T22:33:39+08:00
-draft: true
+draft: false
 author: "Jimmy Lin"
 isCJKLanguage: true
 tags: ["Build"]
