@@ -5,7 +5,7 @@ draft: false
 author: "Jimmy Lin"
 isCJKLanguage: true
 tags: ["Build"]
-categories: [Software Development]
+categories: ["Software Development"]
 ---
 最近兩週花了蠻多時間研究該如何使用 Wix (Windows Installer XML) 來打包 source file 成一個 `.msi` 檔，因為沒有打包成 `.exe` 的經驗，無法比較兩者的差異。中文資料真的少之又少，有很多又很舊了，雖然我覺得以後自己也不太會用到，但還是寫一下希望可以幫助到需要的人。這篇文章是以 [Wix 上的教學] 為基礎，再加上許多自一些的經驗，雖然只是略懂皮毛，不過至少可以成功建立 `.msi` 檔。
 

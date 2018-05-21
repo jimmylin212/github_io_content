@@ -4,7 +4,7 @@ date: {{ .Date }}
 draft: true
 author: "Jimmy Lin"
 isCJKLanguage: true
-tags: []
-categories: []
+tags: ["Hugo", "GitHub", "CircleCI", "Build", "Docker"]
+categories: ["Web App Development", "Software Development", "DevOps"]
 ---
 
