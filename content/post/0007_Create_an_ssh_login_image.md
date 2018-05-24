@@ -1,7 +1,7 @@
 ---
 title: "建立一個可用帳號密碼登入的 image"
 date: 2018-05-20T21:06:13+08:00
-draft: true
+draft: false
 author: "Jimmy Lin"
 isCJKLanguage: true
 tags: ["Build", "Docker", "DevOps"]
@@ -24,9 +24,7 @@ categories: ["DevOps"]
 2. 利用 Dockerfile 把你要做的事情一次寫完，之後只要下 `docker build -t IMAGENAME:TAG .` 就可以無痛的建立一個 image 了。
 
 那我們先看這個 Dockerfile 的內容，我是拿最新的 Ubuntu 當作我的 base image
-```
-The content of dockerfile
-```
+{{< gist jimmylin212 b53d72885b0f55c869901bdb85a8a56f >}}
 
 總共做了下面幾件事情：
 
