@@ -1,7 +1,7 @@
 ---
 title: "利用 pm2 管理 node 服務，結合 Docker Image 達到持續交付"
 date: 2018-05-20T22:05:42+08:00
-draft: true
+draft: false
 author: "Jimmy Lin"
 isCJKLanguage: true
 tags: ["Build", "Docker"]
@@ -157,6 +157,9 @@ m0dwq97pf7vp  SERVICE_NAME_website  replicated  2/2       USER_NAME/REPO_NAME:TA
 ```
 
 使用上面兩行指令，就可以做到 zero downtime deploy 了，可以在部署的時候下 `docker service ls`，會明顯看到有一個 service 先被關掉了，但是服務還可以連到。
+
+其實透過 Docker 掛載 volume，利用 service 以及 stack 啟動服務還蠻直覺的，管理上也很方便，結合 Jenkins，就可以把 CI/CD 都連在一起。這次算是第一次自己搞 DevOps 的工作，學到很多，如果設定有疑問可直接留言，看到都會回。
+
 
 
 
