@@ -15,7 +15,7 @@ googleAnalytics = "UA-2756751-14"
 [Params]
   #homeTitle = "Beautiful Hugo Theme" # Set a different text for the header on the home page
   subtitle = "Engineer - Reader - Diver"
-  logo = "/static/images/avatar.png"
+  logo = "images/avatar.png"
   favicon = "img/favicon.ico"
   dateFormat = "January 2, 2006"
   commit = false
