@@ -1,69 +1,102 @@
-# Site settings
 baseurl = "https://jimmylin212.github.io"
-languageCode = "zh-tw"
+DefaultContentLanguage = "en"
 title = "Jimmy Lin"
-theme = "cactus"
-googleAnalytics = "UA-2756751-14"
+theme = "beautifulhugo"
+metaDataFormat = "yaml"
+pygmentsStyle = "trac"
+pygmentsUseClasses = true
+pygmentsCodeFences = true
+pygmentsCodefencesGuessSyntax = true
+#pygmentsUseClassic = true
+#pygmentOptions = "linenos=inline"
 disqusShortname = "jimmylin212-github-io"
-staticDir = "static"
-hasCJKLanguage = true
-enableRobotsTXT = true
-rssLimit = 10
+googleAnalytics = "UA-2756751-14"
 
-[taxonomies]
-  category = "categories"
-  tag = "tags"
+[Params]
+  #homeTitle = "Beautiful Hugo Theme" # Set a different text for the header on the home page
+  subtitle = "Engineer - Reader - Diver"
+  logo = "/static/images/avatar.png"
+  favicon = "img/favicon.ico"
+  dateFormat = "January 2, 2006"
+  commit = false
+  rss = true
+  comments = true
+  readingTime = true
+  useHLJS = true
+  socialShare = true
+#  gcse = "012345678901234567890:abcdefghijk" # Get your code from google.com/cse. Make sure to go to "Look and Feel" and change Layout to "Full Width" and Theme to "Classic"
 
-[related]
-	threshold = 80
-	includeNewer = false
-	toLower = false
+#[[Params.bigimg]]
+#  src = "img/triangle.jpg"
+#  desc = "Triangle"
+#[[Params.bigimg]]
+#  src = "img/sphere.jpg"
+#  desc = "Sphere"
+#  # position: see values of CSS background-position.
+#  position = "center top"
+#[[Params.bigimg]]
+#  src = "img/hexagon.jpg"
+#  desc = "Hexagon"
 
-	[[related.indices]]
-		name  = "tags"
-		weight = 100
+[Author]
+  name = "Jimmy Lin"
+  website = "jimmylin212.github.io"
+  email = "jimmylin212@gmail.com"
+  facebook = "jimmylin212"
+  stackoverflow = "users/743158/jimmy-lin"
+  github = "jimmylin212"
+  linkedin = "jimmylin212"
+  #googleplus = "+username" # or xxxxxxxxxxxxxxxxxxxxx
+  #gitlab = "username"
+  #bitbucket = "username"
+  #twitter = "username"
+  #reddit = "username"
+  #xing = "username"
+  #snapchat = "username"
+  #instagram = "username"
+  #youtube = "user/username" # or channel/channelname
+  #soundcloud = "username"
+  #spotify = "username"
+  #bandcamp = "username"
+  #itchio = "username"
+  #vk = "username"
+  #paypal = "username"
+  #telegram = "username"
 
-[params]
-	name = "Jimmy Lin"
-	description = "Things that I learned"
-	bio = "Programmer - Diver - Blogger"
-	# Enter optionally your twitter account
-	twitter = ""
-	enableRSS = true
+[[menu.main]]
+    name = "Blog"
+    url = ""
+    weight = 1
 
-	# Integrate Javascript files or stylesheets by adding the url to the external assets or by
-	# linking local files with their path relative to the static folder, e.g. "css/styles.css"
-	customCSS = []
-	customJS  = []
+[[menu.main]]
+    name = "About"
+    url = "about/"
+    weight = 3
 
-	# The variables below are optionally too and can be used to
-	# translate or customize each string of the theme.
+#[[menu.main]]
+#    identifier = "samples"
+#    name = "Samples"
+#    weight = 2
 
-	# Navigation links
-	home = ""
-	subscribe = ""
-	# Pagination links
-	olderPosts = ""
-	newerPosts = ""
-	readMore = "更多文章"
-	readMoreCount = 3
-	copyright = ""
-	# Sharing options and author information in posts
-	aboutAuthor = "Programmer - Diver - Blogger"
-	# tweet = ""
-	# share = ""
-	# 404 page
-	title404 = ""
-	subtitle404 = ""
+#[[menu.main]]
+#    parent = "samples"
+#    name = "Big Image Sample"
+#    url = "post/2017-03-07-bigimg-sample"
+#    weight = 1
 
-	# Choose a font for the social icons in the footer. Either "mono-social" or "font-awesome"
-	iconFont = "mono-social"
-    # The social icons can be styled differently if you use mono as font - circle, rounded, or empty
-    socialIconStyle = "circle"
+#[[menu.main]]
+#    parent = "samples"
+#    name = "Math Sample"
+#    url = "post/2017-03-05-math-sample"
+#    weight = 2
 
-# Add additional social link entries underneath
-[social]
-    facebook = "https://www.facebook.com/jimmylin212"
-	linkedin = "https://www.linkedin.com/in/jimmylin212/"
-    githubalt = "https://www.github.com/jimmylin212"
-	stackoverflow = "https://stackoverflow.com/story/jimmylin212"
+#[[menu.main]]
+#    parent = "samples"
+#    name = "Code Sample"
+#    url = "post/2016-03-08-code-sample"
+#    weight = 3
+
+[[menu.main]]
+    name = "Tags"
+    url = "tags"
+    weight = 3

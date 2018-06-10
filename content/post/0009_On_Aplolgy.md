@@ -1,7 +1,7 @@
 ---
 title: "Aaron Lazare - On Apology (道歉的力量)"
 date: 2018-06-09T14:58:16+08:00
-draft: true
+draft: false
 author: "Jimmy Lin"
 isCJKLanguage: true
 tags: ["Books"]
