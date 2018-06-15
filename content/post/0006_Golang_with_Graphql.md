@@ -1,7 +1,7 @@
 ---
 title: "利用 Golang 與 GraphQL Server 做檔案操作"
-date: 2018-06-14T00:16:02+08:00
-draft: true
+date: 2018-06-15T21:00:00+08:00
+draft: false
 author: "Jimmy Lin"
 isCJKLanguage: true
 tags: ["Golang", "GraphQL", "Backend"]
@@ -22,7 +22,7 @@ categories: ["Web App Development", "Back-end Development"]
 3. 發送 GraphQL 指令
 4. 整理 GraphQL response
 
-## 利用 Golang 讀取 config 檔
+## 讀取 config 檔
 每個語言或是作業系統都有不同對應的設定檔格式，像 Windows 鍾愛 `.ini`，有些語言又可以支援多種的格式，像 Python 支援 `.ini` 以及 `.json`。在 Golang 當中官方推薦的格式是 `.toml`，這個格式很像 `.ini`，不過又更彈性。在 Golang 當中要讀取 toml 的檔案相當簡單，直接看下面程式碼：
 
 ```go
@@ -61,7 +61,7 @@ go get github.com/BurntSushi/toml
 https_proxy=PROXY_URL:PORT go get github.com/BurntSushi/toml
 ```
 ***
-## 利用 Golang 建立一個簡單的 Help Message並支持使用者輸入
+## 建立一個簡單的 Help Message並支持使用者輸入
 我覺得 Golang 在這塊沒有像 Python 這麼的完善，介面相對簡單許多，也沒有提供 required 的功能，需要我們自己來實踐，直接看程式碼：
 
 ```go
@@ -101,14 +101,12 @@ Usage of C:\\Users\\USER_NAME\\go\\src\\PROJECT\\PROJECT.exe:
 即可進入程式
 
 ***
-## 利用 Golang 發送 GraphQL Query 以及 Mutation 指令
-發現 Golang 當中相當推薦使用 Struct 的方式來處理複雜的變數，用一用也覺得蠻不錯用的，所以結果都會轉換成 Struct 再回傳。這邊是定義的回傳 Struct。
+## 發送 GraphQL Query/Mutation 指令以及 form-data 操作
+發現 Golang 相當推薦使用 Struct 的方式來處理結構複雜的變數，所以結果都會轉換成 Struct 再回傳。這邊先定義的回傳 Struct。
 
 ```go
 type Import struct {
-	originRows  float64
-	currentRows float64
-	errorRows   float64
+	lineCount  float64
 }
 
 type Export struct {
@@ -144,10 +142,11 @@ func graphqlQuery(request *http.Request) (statusCode string, response map[string
 }
 ```
 ### Query / Mutation
-這邊雖然說是 Query，不過還是發送 mutation，因為對 Graphql 來說根本沒有差，query 也可以按照下面寫法。
+Query 和 Mutation 操作方式都是一樣的，只差在指令當中把 query 或是 mutation。
 
 ```go
 func graphqlExport(projectID string) (finalRes Export, prettyRes string, err error) {
+    // GraphQL query 指令
 	query := `mutation { 
 		export(projectId:"%s") {
 			filepath 
@@ -155,10 +154,10 @@ func graphqlExport(projectID string) (finalRes Export, prettyRes string, err err
 		} 
 	}`
 
-    // 把 query 變數轉成 Graphql 格式
+    // 把 query 變數轉成要發送的 Graphql 格式
     querySrting := `{"query":` + strconv.QuoteToASCII(fmt.Sprintf(query, projectID)) + `}`
     
-    // 建立新的 request，以及特定的 header
+    // 建立新的 request，以及增加特定的 header
 	request, _ := http.NewRequest("POST", gGraphqlURL, strings.NewReader(querySrting))
 	request.Header.Add("Content-Type", "application/json")
 
@@ -204,9 +203,7 @@ func graphqlImport(filePath, projectID string) (finalRes Import, prettyRes strin
 
 	query := `mutation ($projectId:ID! $file:Upload!) { 
 		import(projectId:$projectId file:$file) {
-			originRows 
-			currentRows 
-			errorRows
+			lineCount 
 		} 
 	}`
 	variables := `{	
@@ -247,9 +244,7 @@ func graphqlImport(filePath, projectID string) (finalRes Import, prettyRes strin
 	}
 
     // 轉換 response 成 struct 格式
-	finalRes.currentRows = response["data"]["import"]["currentRows"].(float64)
-	finalRes.originRows = response["data"]["import"]["originRows"].(float64)
-	finalRes.errorRows = response["data"]["import"]["errorRows"].(float64)
+	finalRes.currentRows = response["data"]["import"]["lineCount"].(float64)
 
     // Pretty print response 格式
 	tmpPrettyRes, err := json.MarshalIndent(response, "", "  ")
@@ -259,37 +254,44 @@ func graphqlImport(filePath, projectID string) (finalRes Import, prettyRes strin
 }
 ```
 ***
-## 利用 Golang 下載某個 URL 的檔案
+## 下載某個 URL 的檔案
+要下載某個 URL 的檔案或是讀取某一個 URL 的內容是後端常見的使用情境，要怎做呢？這邊可以注意一下程式碼中 URL 的串接方式，雖然可以用簡單的方式 `fmt.Sprintf("%s/%s", DOMAIN, PATH)`，不過看到 stackoverflow [這篇文章](https://stackoverflow.com/a/43415988/743158)之後發現這種作法應該比較正確。
+
 ```go
 func downloadFromURL(dstDirPath string, finalRes Export) error {
-
+    gBaseDomain := "http://DOMAIN.COM"
+    // Parse URL domain
 	base, err := url.Parse(gBaseDomain)
 	if err != nil {
 		return err
 	}
-
+    // Parse URL Path
 	downloadPath, err := url.Parse(finalRes.filePath)
 	if err != nil {
 		return err
 	}
-
-	downloadURL := base.ResolveReference(downloadPath).String()
+    // Concat Domain and Path to one URL
+    downloadURL := base.ResolveReference(downloadPath).String()
+    // Concat 檔案路徑
 	dstFilePath := filepath.Join(dstDirPath, finalRes.fileName)
 
 	log.Printf("Download %v -> %v", downloadURL, dstFilePath)
 
+    // 開啟目標檔案
 	file, err := os.Create(dstFilePath)
 	if err != nil {
 		return err
 	}
-	defer file.Close()
-
+    defer file.Close()
+    
+    // 讀取 URL 內容
 	resp, err := http.Get(downloadURL)
 	if err != nil {
 		return err
 	}
 	defer resp.Body.Close()
 
+    // 複製 URL 內容至檔案
 	_, err = io.Copy(file, resp.Body)
 	if err != nil {
 		return err
@@ -299,7 +301,7 @@ func downloadFromURL(dstDirPath string, finalRes Export) error {
 }
 ```
 ***
-## 利用 Golang 檢查檔案是否存在或是輸入是否為資料夾
+## 檢查檔案是否存在或是輸入是否為資料夾
 Golang 裡面這種對於資料夾的驗證比較麻煩一點，或是並沒有提供，查一查發現許多人都會自己寫並且包成一個 function 方便未來使用，如下：
 
 ```go
@@ -329,3 +331,4 @@ func isDirectory(path string) error {
 }
 ```
 ***
+寫了這個簡單的小工具，開始理解 Golang 的邏輯，一開始有點不習慣，不過寫道之後其實蠻上手的，因為 Golang 的嚴格規範，每一個人寫出來的程式碼都會符合某種風格，這也讓專案越來越大的時候更方便管理，這點是很值得讚揚的。雖然只是一個小小的工具，不過已經有點喜歡用 Golang 了，之後一些 Backend 的城市應該都會嘗試用 Golang 來寫，若有問題也請留言，有看到都會回。
