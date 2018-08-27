@@ -2,7 +2,7 @@ version: 2
 global: &global
   working_directory: ~/project
   docker:
-    - image: felicianotech/docker-hugo:0.30.2
+    - image: cibuilds/docker-hugo:0.47
 
 jobs:
   build_n_deploy:
