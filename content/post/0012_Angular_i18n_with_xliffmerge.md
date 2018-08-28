@@ -6,6 +6,7 @@ author: "Jimmy Lin"
 isCJKLanguage: true
 tags: ["Frontend", "Angular"]
 categories: ["Web App Development", "Software Development", "Front-end Development"]
+image: "/images/cover/0012.png"
 ---
 
 最近這幾個月使用 Angular + Firebase 開發 side-project，想要利用 Angular 中的 i18n 的功能來完成多國語言支援。雖然不一定用的到，不過可以把語言的相關資料都存放在同一個地方也比較方便管理。Angular 中提供非常方便的 i18n 的方法，[官方的教學](https://angular.io/guide/i18n) 也寫得非常清楚，按照教學做，就可以成功地讓網站支援多國語言。不過我使用的過程當中發現兩個問題

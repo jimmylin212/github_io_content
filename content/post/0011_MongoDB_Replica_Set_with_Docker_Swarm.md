@@ -6,6 +6,7 @@ author: "Jimmy Lin"
 isCJKLanguage: true
 tags: ["Docker", "Backend"]
 categories: ["DevOps"]
+image: "/images/cover/0011.png"
 ---
 
 這篇文章說明如何在 Docker Swarm 上面使用 Mongodb 自身的 Replica Set 以及環境建置，雖然 Docker Service 已經可以使用內建的 replica 了，不過使用 Mongodb 自身的支援度較高也較完整，本文參考自 Medium 的[這篇](https://medium.com/@kalahari/running-a-mongodb-replica-set-on-docker-1-12-swarm-mode-step-by-step-a5f3ba07d06e)，寫得非常清楚詳細。

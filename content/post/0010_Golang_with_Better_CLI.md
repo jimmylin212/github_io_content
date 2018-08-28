@@ -6,6 +6,7 @@ author: "Jimmy Lin"
 isCJKLanguage: true
 tags: ["Golang", "Backend"]
 categories: ["Back-end Development"]
+image: "/images/cover/0010.png"
 ---
 
 Golang 提供了簡單的方法產生 Help Message 以及支援使用者輸入，不過如果你的 CLI Tool 功能較多，或是有階層性的，那要怎麼辦？我們可以利用 [Cobra](https://github.com/spf13/cobra) 以及 [Viper](https://github.com/spf13/viper)，這兩個其實是完全不相關的 module，可以單獨使用，不過我覺得結合再一起真的是非常不錯。Cobra 是用來產生漂亮的 CLI 介面以及支援處理使用者的輸入；Viper 則是負責處理 config 檔。想像一下，一個常見的 CLI，程式輸入不外乎就是從這兩個入口進來，所以一起來看一下吧！
