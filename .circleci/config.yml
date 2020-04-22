@@ -2,7 +2,7 @@ version: 2
 global: &global
   working_directory: ~/project
   docker:
-    - image: cibuilds/hugo:0.55
+    - image: cibuilds/hugo:0.69.1
 
 jobs:
   build_n_deploy:

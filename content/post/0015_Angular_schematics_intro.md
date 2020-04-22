@@ -4,7 +4,7 @@ date: 2019-07-22T11:20:16+08:00
 draft: false
 author: "Jimmy Lin"
 isCJKLanguage: true
-tags: ["Angular", "Frentend"]
+tags: ["Angular", "Frontend"]
 categories: ["Web App Development", "Software Development"]
 # image: "/images/cover/xxxx.png"
 ---
