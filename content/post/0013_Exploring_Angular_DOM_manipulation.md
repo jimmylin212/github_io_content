@@ -1,14 +1,18 @@
 ---
-title: "透過 ViewContainerRef 了解 Angular DOM 修改機制"
+title: 透過 ViewContainerRef 了解 Angular DOM 修改機制
 date: 2018-12-20T11:17:31+08:00
-draft: false
-author: "Jimmy Lin"
+author: Jimmy Lin
 isCJKLanguage: true
-tags: ["Frontend", "Angular"]
-categories: ["Web App Development", "Software Development", "Front-end Development"]
+tags:
+- Frontend
+- Angular
+categories:
+- Web App Development
+- Software Development
+- Front-end Development
 image: "/images/cover/0013.png"
----
 
+---
 最近因為工作需要，要自己寫一個 Angular 專用的 UI System，這樣的好處是可以自己維護，也可以適用到公司內部其他的 Angular 專案。在開發一些簡單的 Component 像是 Button、Checkbox 都蠻簡單的，只要了解如何在 Host 以及 Component 溝通就可以了，不過開發到 Modal(Dialog) 的時候碰到了一些問題，網路上找到一些解決方法，也看到一篇很厲害的文章，這篇文章主要就是翻譯那篇神文，原文在：[Exploring Angular DOM manipulation techniques using ViewContainerRef](https://blog.angularindepth.com/exploring-angular-dom-abstractions-80b3ebcfc02)，如果有錯的話也請留言互相切磋一下。
 
 有別於 AngularJS，Angular2 跑在許多不同的平台上，在瀏覽器、手機或是在 Web Worker 裡面。因為這樣，需要一個中間層 (abstractions) 在平台的 API 以及 framework 的 Interface 間溝通。在 Angular 的世界裡，這些中間層就是我們常看到的 ElementRef、TemplateRef、ViewRef、ComponentRef 以及 ViewContainerRef。在這篇文章裡我們會解釋每一個不同的中間層，並且了解他們是如何操作 DOM。
