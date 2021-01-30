@@ -63,7 +63,7 @@ cordova build android
 
 然後就會開始出錯....
 
-## Build time 遇到的錯誤
+## 遇到的錯誤們
 
 ### AndroidX dependencies
 遇到的第一個錯誤
@@ -165,6 +165,27 @@ cordova plugin add https://github.com/walteram/cordova-universal-links-plugin
 ```
 
 終於可以順利登入看到畫面了。
+
+### 上一頁破圖
+在使用的過程當中發現按下手機上的返回鍵，畫面會卡在中間，簡單搜尋一下找到 Github issue [Bug router angular v5.2.4+ with cordova (BrowserAnimationsModule bug)](https://github.com/angular/angular/issues/22509) 發現是 `BrowserAnimationsModule` 的問題，結果有條 comment (https://github.com/angular/angular/issues/22509#issuecomment-382297711) 提供了 workaround 的作法，在 `index.html` 中，引入 `cordova.js` 的前面加上：
+
+```html
+<script>
+  window.addEventListener = function () {
+    EventTarget.prototype.addEventListener.apply(this, arguments);
+  };
+  window.removeEventListener = function () {
+    EventTarget.prototype.removeEventListener.apply(this, arguments);
+  };
+  document.addEventListener = function () {
+    EventTarget.prototype.addEventListener.apply(this, arguments);
+  };
+  document.removeEventListener = function () {
+    EventTarget.prototype.removeEventListener.apply(this, arguments);
+  };
+</script>
+<script src="cordova.js"></script>
+```
 
 ## 打包
 打包 Android 也是很重要的一環，不過這部分網路上有蠻多教學，我就只列出會用到的指令
